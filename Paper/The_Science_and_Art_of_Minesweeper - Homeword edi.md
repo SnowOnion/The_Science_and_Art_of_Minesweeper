@@ -1,4 +1,4 @@
-﻿[pic1.1]: 1.1.bmp "要来一发吗？"
+[pic1.1]: 1.1.bmp "要来一发吗？"
 [pic1.2]: 1.2.bmp "一库！"
 [pic2.1]: 2.1.bmp "..."
 [pic2.2]: 2.2.bmp "..."
@@ -10,19 +10,33 @@
 [pic4.4]: 4.4.bmp "..."
 
 #扫雷的科学与艺术
-##摘要
-##关键字
+
+班级: 2011211501 学号: 2011212012 李天池 
+
+2013.5
+
+##目录
+1. 扫雷规则简介
+2. 基本的手解扫雷技巧
+3. 确定型解扫雷算法理论
+4. 概率型解扫雷算法理论
+5. 概率型解扫雷算法实现
 ##正文
-##参考文献
-
-###0. 这是什么
 
 
+###1. 扫雷规则简介
+扫雷游戏的 __局面__ 是一个由 **方块** 构成的矩阵，每个方块下面可能藏着雷，也可能没有雷。
 
-###1. 规则简介
-扫雷游戏的 __局面__ 是一个由 **方块** 构成的矩阵，每个方块下面可能藏着雷，也可能没有雷。如果打开一个 **雷块** ，则游戏失败；如果打开一个 **非雷方块** ，则在该块上会显示一个数字，代表其周围8格内的雷的数量。游戏的目标是，打开所有非雷方块。
+如果打开一个 **雷块** ，则游戏失败；
+
+如果打开一个 **非雷方块** ，则在该块上会显示一个数字，代表其周围8格内的雷的数量。游戏的目标是，打开所有非雷方块。
+
 大多数扫雷游戏（如Windows各版本自带的扫雷，或专业的MineSweeper Clone）的操作方式是：
-左键点击未打开的方块，则 **打开** 它（若数字为0，则再打开它周围的8格）；右键点击未打开的方块，则在此做一 **标记** ，表示玩家认为此处是雷；左键双击(Double clicking)或左右键同时点击( **Chording**  )已打开的方块，若方块周围8格内的标记数等于方块上的数字，则自动打开周围8格内未打开的方块。
+
++ 左键点击未打开的方块，则 **打开** 它（若数字为0，则再打开它周围的8格）；
++ 右键点击未打开的方块，则在此做一 **标记** ，表示玩家认为此处是雷；
++ 左键双击(Double clicking)或左右键同时点击( **Chording**  )已打开的方块，若方块周围8格内的标记数等于方块上的数字，则自动打开周围8格内未打开的方块。
+
 另外，扫雷游戏往往会提示剩余雷数，即总雷数减去已做标记数。
 
 图1.1是一个游戏局面，画◆的方块是被标记的，深色方块实际上是被打开且数字为0的，无色方块是未被打开的。图1.2是一个胜利局面，可以看出并非所有雷都需要被标记。两图下方数字是剩余雷数。
@@ -63,9 +77,9 @@
 
 考虑b，它使efghj中有且只有三个雷；考虑a，它使得def中有且只有一个雷，于是efghj的三个雷中有至少有两个雷在ghj；（某种程度上，现在已经化为2.3的情形）考虑c，它使得hj中有且只有一个雷，于是ghj的至少两个雷中又至少有一个雷在g，flag g。
 
-###3. 确定型解扫雷算法
+###3. 确定型解扫雷算法理论
 
-####丰满（？）的理论
+####丰满的理论
 
 我们的目的是搞出解扫雷算法，那么就需要把上面所示的这些经验形式化，从而编写相应程序。
 下面还是定义一些术语和符号：
@@ -122,7 +136,7 @@
 
 但是呢，即使用最暴力的搜索方式，运用这几种分析法也是可以解决大部分局面的，除非遇到下文所谓“概率瓶颈”。所以，确定型分析法先告一段落，我们看一下概率型分析法。
 
-###4. 概率型解扫雷算法
+###4. 概率型解扫雷算法理论
 
 例4.1 例4.2 如图4.1和图4.2所示：
 
@@ -173,7 +187,307 @@
 
 把雷局放在水平面上，用高度表示是雷的概率，我脑补一下把概率型算法过程可视化的场景：概率的水面波澜不惊，突然上帝之手open一块水面，仿佛砸进一块石板，概率被砸到0，凹陷为谷。周围的水，要么被带入谷底，万劫不复；要么掀起巨浪，若是浪头触到概率1的天际，则静止不落，崛起为峰。完全自动的波澜起伏势不可挡，硬是把全部水面分成了高度为1的峰顶和高度为0的谷底；沟壑纵横齐声宣布，“我们胜利了！”。
 
-###5. 一些术语和站点：NF，FL，3BV，ZINI，纪录，以及saolei.net和minesweeper.info
+###5. 概率型解扫雷算法实现
+
+我使用python实现了一个概率型算法的扫雷求解器。
+
+由于没有找到 正确地划分闲者集 的好办法，我采用的方式相对暴力。叙述如下：
+
++ 将每个格子编号（如用行列角标i,j），对应一个变量x_(i,j)。值为1表示该格是雷，值为0表示该格不是雷。
++ 对每一个1阶闲者集列出一个方程。闲者集A中每个格的x值之和=(A)。
++ 求出这个方程组的所有可行解。然后，一个格子是雷的概率，就等于 (该格的x值=1时的可行解数)/(总可行解数)。
+
+然后，每增加一个1阶闲者集，就增加一个方程；每当一个闲者集消失，就把它对应的方程从方程组中清除。
+
+表示流程的伪代码如下：
+
++ do{
++ 读入游戏局面()
++ 清除消失的闲者集对应的方程()
++ 求出可行解()
++ 求出各格概率()
++ 根据概率，去操作游戏()
+}
++ while(可行解不唯一)
+
+用python实现的代码放在附录里。
+
+这里展示一下用它来解扫雷的成果。格式如下：
+
++ 游戏局面矩阵，s表示未打开的格子
++ 剩余雷数
++ 前述方程组的增广矩阵
++ 求得的各格是雷的概率
+
+一. 理性地狱情形2
+
+  s  2  2  s
+
+  2  s  s  2
+
+  1  s  s  1
+
+4
+
+  1  0  0  1  0  1  1  0  0  1  1  0  4
+
+  1  0  0  0  0  1  1  0  0  0  0  0  2
+
+  0  0  0  1  0  1  1  0  0  0  0  0  2
+
+  1  0  0  0  0  1  0  0  0  1  0  0  2
+
+  0  0  0  1  0  0  1  0  0  0  1  0  2
+
+  0  0  0  0  0  1  0  0  0  1  0  0  1
+
+  0  0  0  0  0  0  1  0  0  0  1  0  1
+
+
+
+ 1.00 0.00 0.00 1.00
+
+ 0.00 0.50 0.50 0.00
+
+ 0.00 0.50 0.50 0.00
+
+可以看出，的确是个两难境地。
+
+二. 能够用概率推动进程的情形
+
+  s  s  s  s
+
+  4  s  3  s	
+
+  s  s  s  s
+
+5
+
+  1  1  1  1  0  1  0  1  1  1  1  1  5
+
+  1  1  0  0  0  1  0  0  1  1  0  0  4
+
+  0  1  1  1  0  1  0  1  0  1  1  1  3
+
+
+ 1.00 0.67 0.20 0.20
+
+ 0.00 0.67 0.00 0.20
+
+ 1.00 0.67 0.20 0.20
+
+三. 与一个同学的概率争论
+
+  2  s  2
+
+  s  s  s
+
+  s  s  s
+
+  s  s  s
+
+5
+
+  0  1  0  1  1  1  1  1  1  1  1  1  5
+
+  0  1  0  1  1  0  0  0  0  0  0  0  2
+
+  0  1  0  0  1  1  0  0  0  0  0  0  2
+
+4096
+
+1024
+
+50
+
+ 0.00 0.70 0.00
+
+ 0.60 0.70 0.60
+
+ 0.40 0.40 0.40
+
+ 0.40 0.40 0.40
+
+四. 一次概率指导下的胜利
+
++ 初始状态：
+
+  1  s  s  s
+
+  s  s  s  s
+
+  s  s  s  s
+
+  s  s  s  s
+
+  s  s  s  s
+
+5
+
+  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  5
+
+  0  1  0  0  1  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
+
+
+
+ 0.00 0.33 0.25 0.25
+
+ 0.33 0.33 0.25 0.25
+
+ 0.25 0.25 0.25 0.25
+
+ 0.25 0.25 0.25 0.25
+
+ 0.25 0.25 0.25 0.25
+
+
+
+ + 开启概率为0的格子：
+
+ 
+
+  1  1  0  0
+
+  s  2  2  1
+
+  s  s  s  s
+
+  s  s  s  s
+
+  s  s  s  s
+
+5
+
+  0  0  0  0  1  0  0  0  1  1  1  1  1  1  1  1  1  1  1  1  5
+
+  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  1  1  1  0  0  0  0  0  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  1  1  1  0  0  0  0  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  0  1  1  0  0  0  0  0  0  0  0  1
+
+
+
+ 0.00 0.00 0.00 0.00
+
+ 1.00 0.00 0.00 0.00
+
+ 0.00 1.00 0.00 1.00
+
+ 0.25 0.25 0.25 0.25
+
+ 0.25 0.25 0.25 0.25
+
+
+
+  + 继续开启概率为0的格子：
+
+ 
+
+  1  1  0  0
+
+  s  2  2  1
+
+  3  s  4  s
+
+  s  s  s  s
+
+  s  s  s  s
+
+5
+
+  0  0  0  0  1  0  0  0  0  1  0  1  1  1  1  1  1  1  1  1  5
+
+  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  1  0  1  0  0  0  0  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  0  1  0  0  1  1  0  0  0  0  0  0  3
+
+  0  0  0  0  0  0  0  0  0  1  0  1  0  1  1  1  0  0  0  0  4
+
+
+
+ 0.00 0.00 0.00 0.00
+
+ 1.00 0.00 0.00 0.00
+
+ 0.00 1.00 0.00 1.00
+
+ 0.00 1.00 0.50 0.50
+
+ 0.00 0.00 0.00 0.00
+
+
+
+ + 继续开启概率为0的格子：
+
+
+
+  1  1  0  0
+
+  s  2  2  1
+
+  3  s  4  s
+
+  2  s  s  s
+
+  1  1  2  1
+
+5
+
+  0  0  0  0  1  0  0  0  0  1  0  1  0  1  1  1  0  0  0  0  5
+
+  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  1  0  1  0  0  0  0  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  1
+
+  0  0  0  0  1  0  0  0  0  1  0  0  0  1  0  0  0  0  0  0  3
+
+  0  0  0  0  0  0  0  0  0  1  0  1  0  1  1  1  0  0  0  0  4
+
+  0  0  0  0  0  0  0  0  0  1  0  0  0  1  0  0  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  1
+
+  0  0  0  0  0  0  0  0  0  0  0  0  0  1  1  0  0  0  0  0  1
+
+  0  0  0  0  0  0  0  0  0  0  0  0  0  1  1  1  0  0  0  0  2
+
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  1  0  0  0  0  1
+
+
+
+ 0.00 0.00 0.00 0.00
+
+ 1.00 0.00 0.00 0.00
+
+ 0.00 1.00 0.00 1.00
+
+ 0.00 1.00 0.00 1.00
+
+ 0.00 0.00 0.00 0.00
+
+
+ 可行解唯一，胜利！
+
+###6. 一些术语和站点：NF，FL，3BV，ZINI，纪录，以及saolei.net和minesweeper.info
 
 + NF指只open，不flag的玩法。当然也不chrod。
 + FL指open、flag、chord都允许的玩法。
@@ -182,14 +496,350 @@
 + 目前(20130518)的中国纪录，解开高级（16*30格，99雷）的最短时间是38.82秒，由张砷镓在2008年1月26日创造。张砷镓同时也是扫雷网创始人，中国魔方三阶速拧第一人 。解开高级的世界纪录是31.13秒，由波兰的Kamil Muranski在2010年7月3日创造。
 + 中国扫雷排行见于扫雷网saolei.net，世界排行见于minesweeper.info。需要注意的是，在这两个站点提交纪录的载体，必须是指定的扫雷软件以内置功能录制的录像。
 
-~~
-###6. 未来 | 怎么给一块文字加删除线？
-我（也许会变成我们）的关于扫雷的研究和开发成果，会不断发布在github.com/SnowOnion。鉴于杂志从投稿到出街（出宿舍...）有数个月的时间差，在诸位读者看到本文时，我保证上述网址会存在：1) 一个扫雷游戏的实现，以及源码；2) 一个扫雷自动求解器——它能应用于1)和大部分主流扫雷游戏——以及源码；3) 本文的进化版本，填上大部分的坑。
-~~
 
-###跋
-行文匆忙，难免疏漏。请读者不吝Debug，任何相关事宜可在snowonionlee@gmail.com交流。
-谨以此文，与诸位扫雷爱好者，或是看完本文成为扫雷爱好者的同学（会有吗？:)）共勉。
 
-###参考文献
-@TODO
+
+##附录
+概率型求解器的python代码。
+
+非常丑陋。它还在改进中。但对于小规模的数据，已经可以用了。
+
+它的改进发布在
+https://github.com/SnowOnion/The_Science_and_Art_of_Minesweeper 。
+
+文件： mat.py
+
+<pre><code>
+
+# coding=utf-8
+#!/usr/bin/python2
+
+'''
+Created on 2013-5-29
+
+@author: SnowOnion
+'''
+
+import decimal
+
+# <UTIL>
+
+# @well 
+def matrixForm(mat, width):
+    '''
+    '''
+    from os import linesep
+    rst = ''
+    for line in mat:
+        for ele in line:
+            if type(ele)==type(3.14):
+                newnew='%.2f'%(ele)
+            else:
+                newnew = str(ele)
+            rst = rst + ('%' + str(width) + 's') % (newnew)
+        rst += linesep
+    return rst
+
+# @well
+def printMatrix(mat, width=3):
+    print matrixForm(mat, width),
+    
+# @well
+def mat2list(mat):
+    lst = []
+    for line in mat:
+        lst.extend(line)
+    return lst
+
+# @well
+def list2mat(lst, col):
+    mat = []
+    for i in range(len(lst) / col):
+        mat.append(lst[i * col:(i + 1) * col])
+    if len(lst) % col != 0:
+        print 'warn: 列数不整除元素数.'
+        mat.append(lst[(len(lst) / col) * col:])
+    return mat        
+    
+# @quite well    
+def tolog(str, filePath="log.txt"):
+    f = file(filePath, 'w')
+    f.write(str)
+    f.close
+    
+# </UTIL>
+
+
+# @well
+def addPre(lst, alphabet):
+    newlst = []
+    for alpha in alphabet:
+        for ele in lst:
+            alst = [alpha]
+            alst.extend(ele)
+            newlst.append(alst)
+    return newlst
+
+# @well
+def dicOrder(length=1, alphabet=[0, 1]):
+    lst = [[]]
+    for i in range(length):
+        lst = addPre(lst, alphabet)
+    return lst
+    
+# @well
+def realIndex(col, i, j):
+    return i * col + j
+
+# @well
+def ijIndex(col, realInd):
+    return (realInd / col, realInd % col)
+
+# 用于配合 realIndex() 彻底解决越界问题
+def at(mat, i, j):
+    pass
+
+# 用于配合 realIndex() 彻底解决越界问题
+def atr(mat, rindex):
+    pass
+
+def examSolu(mat, solu): 
+    for equ in mat:
+        multi = 0        
+        for i in range(len(solu)):
+            multi += equ[i] * solu[i]
+        
+        if solu == [0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0]:
+            print equ
+            print solu
+            print multi, equ[-1]
+        
+        if multi == equ[-1]:
+            pass  # 通过了这个方程的检验
+        else:
+            return False
+    return True  # 渡尽劫波
+    
+
+def record(solu):
+    print solu
+    
+
+def calcProb(soluPool):
+    '''返回是雷概率list。长度等于len(soluPool[0])
+    '''
+    lenlen = len(soluPool[0])
+    plst = [0] * lenlen
+    for solu in soluPool:
+        for gi in  range(lenlen):
+            plst[gi] += solu[gi]
+    for pi in range(lenlen):
+        plst[pi] /= float(len(soluPool))
+        
+    return plst
+    
+
+def displayProb(pmat):
+    print pmat
+    
+def doOpen(pmat):
+    # 手工去做...
+    # open
+    # change game.txt
+    pass
+
+# @well
+def readGame(filepath="game.txt"):
+    '''return mines,row, col, rawGameMat
+    '''
+    f = file(filepath, 'r')
+    mines = int(f.readline())
+    lines = f.readlines()
+    rawGameMat = [[int(ele, 16) for ele in line.split(' ')] for line in lines]
+    f.close()
+    return (mines, len(rawGameMat), len(rawGameMat[0]), rawGameMat)
+
+# 在这里处理越界！！大概暴力地一劳永逸？
+# @ well
+def circumIjIndexList(i, j, row, col):
+    
+    lst = []
+    
+    up = (i == 0)
+    down = (i == row - 1) 
+    left = (j == 0) 
+    right = (j == col - 1)
+    
+    if up and left:        
+        lst.append((i, j + 1))
+        lst.append((i + 1, j))
+        lst.append((i + 1, j + 1))
+        
+    if up and not left and not right:        
+        lst.append((i, j - 1))
+        lst.append((i, j + 1))
+        lst.append((i + 1, j - 1))
+        lst.append((i + 1, j))
+        lst.append((i + 1, j + 1))
+        
+    if up and right:        
+        lst.append((i, j - 1))
+        lst.append((i + 1, j - 1))
+        lst.append((i + 1, j))
+        
+    if right and not up and not down:        
+        lst.append((i - 1, j - 1))
+        lst.append((i - 1, j))
+        lst.append((i, j - 1))
+        lst.append((i + 1, j - 1))
+        lst.append((i + 1, j))
+        
+    if right and down:        
+        lst.append((i - 1, j - 1))
+        lst.append((i - 1, j))
+        lst.append((i, j - 1))
+        
+    if down and not right and not left:        
+        lst.append((i - 1, j - 1))
+        lst.append((i - 1, j))
+        lst.append((i - 1, j + 1))
+        lst.append((i, j - 1))
+        lst.append((i, j + 1))
+        
+    if down and left:        
+        lst.append((i - 1, j))
+        lst.append((i - 1, j + 1))
+        lst.append((i, j + 1))
+        
+    if left and not up and not down:        
+        lst.append((i - 1, j))
+        lst.append((i - 1, j + 1))
+        lst.append((i, j + 1))
+        lst.append((i + 1, j))
+        lst.append((i + 1, j + 1))
+        
+    if not left and not right and not up and not down:        
+        lst.append((i - 1, j - 1))   
+        lst.append((i - 1, j))
+        lst.append((i - 1, j + 1))
+        lst.append((i, j - 1))
+        lst.append((i, j + 1))
+        lst.append((i + 1, j - 1))
+        lst.append((i + 1, j))
+        lst.append((i + 1, j + 1))
+     
+    return lst
+
+
+
+# quite well!
+def generateGame(rawGameMat, row, col, mine):
+   
+    zengguang = []
+    zengguang.append([0] * row * col + [mine])
+   
+    gameList = mat2list(rawGameMat)    
+    
+    for ri in range(len(gameList)):  # 丑陋
+        
+        # 每个非0num有一方程。这个num值，应该改成减完flag的。。。
+        if 1 <= gameList[ri] <= 8:
+            
+            equ = [0] * len(gameList)  # 初始化
+            mines = gameList[ri]
+            
+            ind8 = circumIjIndexList(ijIndex(col, ri)[0], ijIndex(col, ri)[1], row, col)
+            for ind in ind8:
+                if gameList[realIndex(col, ind[0], ind[1])] == 12:  # c
+                    equ[realIndex(col, ind[0], ind[1])] = 1
+                    
+                if gameList[realIndex(col, ind[0], ind[1])] == 15:  # f
+                    mines -= 1
+            equ.append(mines)  # 增广阵的b值
+            zengguang.append(equ)
+        elif gameList[ri] == 12:  # c
+            zengguang[0][ri] = 1
+
+    return zengguang
+    
+# 蓝图
+# 更新mat
+def doit(mat, row, col, soluPool):
+    for solu in soluPool:
+        if examSolu(mat, solu):
+            record(solu)
+    plst = calcProb(solu)
+    displayProb(plst)
+    doOpen(plst)
+#     filt(readGame(), mat)
+    
+# 注意点。。0，[1,8]，12,15
+def filt(rawGameMat, soluPool):
+    '''简直不能更重要了。返回sage筛选后的soluPool
+    '''
+    gamelist = mat2list(rawGameMat)
+    for i in range(len(gamelist)):
+#         print 'i=',i,'solupool len=',len(soluPool)
+        if not  gamelist[i] == 12:  # 非sage留0
+            soluPool = filter(lambda x:x[i] == 0, soluPool)
+#             print 'filt',i,'after, solupool len=',len(soluPool)
+    return soluPool
+
+   
+    
+# 0~8 for num, C(12) for sage, F(15) for flag, 为了: 都用1个空格分隔，而且至少原始文件排版整齐
+if __name__ == '__main__':
+     
+    mines, row, col, rawGameMat = readGame()
+    printMatrix(rawGameMat)
+    print mines
+
+    gameMat = generateGame(rawGameMat, row, col, mines)
+    printMatrix(gameMat)
+        
+    # 这个全产生再筛选太蠢。。。可以砍掉好多大树杈
+    soluPool = dicOrder(row * col, [0, 1]) 
+#     printMatrix(soluPool)
+#     print '/soluPool'
+
+    print len(soluPool)
+    
+    # num与flag者，尽筛成0 ###################flag不应0...而且flag表现在()上还是在本身=1上？？
+    soluPool = filt(rawGameMat, soluPool)
+#     printMatrix(soluPool)
+#     print '/NEWsoluPool'
+
+    print len(soluPool)
+    
+    # 正确性
+    right = 0
+    newSoluPool = []
+    for solu in soluPool:
+        if examSolu(gameMat, solu):
+            right += 1
+#             print right
+            newSoluPool.append(solu)
+    soluPool = newSoluPool
+    print right
+#     printMatrix(newSoluPool)
+    
+
+    # calcProb，为每一个c
+    printMatrix(list2mat(calcProb(soluPool), col), 5) 
+    
+   
+
+
+
+</code></pre>
+
+局面数据文件game.txt:
+
+<pre><code>
+4
+c 2 2 c
+2 c c 2
+1 c c 1
+</code></pre>
+
+
