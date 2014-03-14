@@ -1,5 +1,9 @@
-#扫雷的科学与艺术 
+﻿#扫雷的科学与艺术 
 #[The Science and Art of Minesweeper]
+
+## The only so-so achievement by now
+
+["Paper": The Science and Art of Minesweeper ( In Chinese )](https://github.com/SnowOnion/The_Science_and_Art_of_Minesweeper/blob/master/Paper/The_Science_and_Art_of_Minesweeper.md)
 
 ##致《开拓》读者
 
