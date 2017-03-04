@@ -5,6 +5,10 @@
 
 ["Paper": The Science and Art of Minesweeper ( In Chinese )](https://github.com/SnowOnion/The_Science_and_Art_of_Minesweeper/blob/master/Paper/The_Science_and_Art_of_Minesweeper.md)
 
+## Related Work
+[膜法小分队队长 - 自从编程实现自动扫雷，我发现了惊天秘密！](http://www.bilibili.com/video/av8840844/)
+His work is Exciting!
+
 ##致《开拓》读者
 
 今天是2013年9月22日.
